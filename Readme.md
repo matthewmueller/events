@@ -15,7 +15,7 @@ var events = require('events'),
 
 function Datepicker() {
   var el = $('<div class="datepicker">');
-  events.call(this, el, this.events);
+  events.bind(this, el, this.events);
 }
 
 Datepicker.prototype.events = {
