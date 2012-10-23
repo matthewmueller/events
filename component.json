@@ -1,0 +1,14 @@
+{
+  "name": "events",
+  "repo": "matthewmueller/events",
+  "description": "backbone's event binding as a standalone component",
+  "version": "0.0.1",
+  "keywords": ["events", "delegation", "view"],
+  "main" : "events.js",
+  "dependencies": {
+    "component/event" : "*",
+    "component/delegate" : "*",
+    "component/jquery" : "*"
+  },
+  "scripts": [ "events.js" ]
+}
