@@ -21,19 +21,20 @@ function Datepicker() {
 Datepicker.prototype.events = {
   'click .day'  : 'select',
   'click .next' : 'next',
-  'keypress'    : 'onkey'
+  'hover'       : 'highlight',
+  'keypress'    : function(e) { ... }
 }
 
 Datepicker.prototype.select = function(e) { ... };
 Datepicker.prototype.next = function(e) { ... };
-Datepicker.prototype.onkey = function(e) { ... };
+Datepicker.prototype.highlight = function(e) { ... };
 ```
 
 ## API
 
 ### events#bind([context], el, events)
 
-Bind mouse and keyboard events to `el`. The `events` object signature looks like this: `{ event [selector] : action }`. If a `selector` is provided, an event performed on an inner element will be delegated to `el`. The `action` will be bound to the optional `context`, which defaults to `window`.
+Bind mouse and keyboard events to `el`. The `events` object signature looks like this: `{ event [selector] : action }`. If a `selector` is provided, an event performed on the selected element will be delegated to `el`. The `action` will be bound to the optional `context`, which defaults to `window`.
 
 ### events#unbind(el, event, [fn]);
 

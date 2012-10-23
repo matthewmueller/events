@@ -6,8 +6,6 @@
   "keywords": ["events", "delegation", "view"],
   "main" : "events.js",
   "dependencies": {
-    "component/event" : "*",
-    "component/delegate" : "*",
     "component/jquery" : "*"
   },
   "scripts": [ "events.js" ]
