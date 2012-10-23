@@ -11,6 +11,14 @@ var $ = require('jquery');
 var splitter = /^(\S+)\s*(.*)$/;
 
 /**
+ * Export `events`
+ */
+
+exports = module.exports = bind;
+exports.bind = bind;
+exports.unbind = unbind;
+
+/**
  * Bind events to a given `el`.
  *
  * Example:
@@ -24,7 +32,7 @@ var splitter = /^(\S+)\s*(.*)$/;
  * @param {object} context
  */
 
-exports.bind = function(context, el, events) {
+function bind(context, el, events) {
   if(!arguments[2]) events = el, el = context, context = this;
 
   for(var key in events) {
@@ -44,7 +52,7 @@ exports.bind = function(context, el, events) {
       $(el).delegate(selector, eventName, method);
     }
   }
-};
+}
 
 /**
  * Unbind events
@@ -52,6 +60,6 @@ exports.bind = function(context, el, events) {
  * TODO: Finish me
  */
 
-exports.unbind = function(el, event) {
+function unbind(el, event) {
   $(el).unbind(event);
-};
+}
