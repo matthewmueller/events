@@ -47,9 +47,9 @@ function bind(context, el, events) {
         selector = match[2];
 
     if(selector === '') {
-      $(el).bind(eventName, method);
+      $(el).on(eventName, method);
     } else {
-      $(el).delegate(selector, eventName, method);
+      $(el).on(eventName, selector, method);
     }
   }
 }
