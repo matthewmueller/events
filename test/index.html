@@ -18,32 +18,55 @@
 </head>
 <body>
   <h2>Events Component</h2>
-  
-  <div id="square">
-    <div class="inner">inner square</div>
-  </div>
 
   <script src="../build/build.js" type="text/javascript"></script>
   <script type="text/javascript">
-    var events = require('events'),
-        square = document.getElementById('square');
-
-    var e = {
-      "click" : outer,
-      "click .inner" : inner
+    var $ = require('component-jquery'),
+        Events = require('events');
+    
+    Box = function() {
+      this.el = $('<div id="square"><div class="inner">inner</div></div>');
+      
+      this.bind('click', this.outer)
+          .bind('mouseover', this.select)
+          .bind('mouseout', 'unselect')
+          .bind('click .inner', this.inner, this.change)
+          .bind(document.getElementsByTagName('h2')[0], 'click', function(e) {
+            alert('tee hee.');
+          });
     }
 
-    events.bind.call(window, square, e);
+    // Mixin events
+    Events(Box.prototype);
 
-    function outer(e) {
-      e.preventDefault();
+    Box.prototype.outer = function(e) {
       console.log('clicked outer');
     }
 
-    function inner(e) {
+    Box.prototype.select = function(e) {
+      e.currentTarget.style.outline = '3px solid purple';
+    };
+
+    Box.prototype.unselect = function(e) {
+      e.currentTarget.style.outline = 'none';
+    };
+
+    Box.prototype.inner = function(e) {
       e.stopPropagation();
       console.log('clicked inner');
-    }
+    };
+
+    Box.prototype.change = function(e) {
+      e.currentTarget.style.backgroundColor = 'green';
+    };
+
+    var box = new Box;
+    box.el.appendTo('body');
+
+    setTimeout(function() {
+      console.log('times up... unbinding');
+      box.unbind();
+    }, 2000);
 
   </script>
 </body>
