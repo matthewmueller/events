@@ -10,20 +10,19 @@ Stand-alone event bindings, based on how Backbone's views handle events.
 ## Example
 
 ```js
-var events = require('events'),
+var Events = require('events'),
     $ = require('jquery');
 
 function Datepicker() {
   var el = $('<div class="datepicker">');
-  events.bind(this, el, this.events);
+  this.bind('hover', 'highlight', 'select')
+      .bind('keypress', function(e) { ... });
+      .bind('click .day', 'select')
+      .bind('click .next', this.next)
 }
 
-Datepicker.prototype.events = {
-  'click .day'  : 'select',
-  'click .next' : 'next',
-  'hover'       : 'highlight',
-  'keypress'    : function(e) { ... }
-}
+// Mixin `Events`
+Events(Datepicker.prototype);
 
 Datepicker.prototype.select = function(e) { ... };
 Datepicker.prototype.next = function(e) { ... };
@@ -32,13 +31,31 @@ Datepicker.prototype.highlight = function(e) { ... };
 
 ## API
 
-### events#bind([context], el, events)
+### Events(obj)
 
-Bind mouse and keyboard events to `el`. The `events` object signature looks like this: `{ event [selector] : action }`. If a `selector` is provided, an event performed on the selected element will be delegated to `el`. The `action` will be bound to the optional `context`, which defaults to `window`.
+Mixin `Events` into an object or prototype.
 
-### events#unbind(el, event, [fn]);
+```js
+Events(Colorpicker.prototype);
+```
 
-TODO: Finish me...
+### Events#bind([el], event, fns...)
+
+Bind mouse and keyboard events to `el`. If no element is defined, Events tries binding to `this.el`.
+
+The `event` signature is `event [selector]`. If no `selector` is specified, the event is attached to `el`. Here's a couple valid examples:
+
+`click .color`
+`dblclick #save`
+`mouseout div`
+`keypress`
+`hover`
+
+You may bind an arbitrary number of `fns` to the event. The functions context are set to `this` (none of that `_.bindAll` jazz). You may also pass strings that get resolved by `this[fn]`.
+
+### Events#unbind([el], [event], [fn]);
+
+TODO: Finish me... Right now you can simply unbind all events off `el`.
 
 ## TODO
 

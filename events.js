@@ -2,7 +2,8 @@
  * Module dependencies
  */
 
-var $ = require('jquery');
+var $ = require('jquery'),
+    slice = Array.prototype.slice;
 
 /**
  * Regex to split keys for event delegation
@@ -11,48 +12,90 @@ var $ = require('jquery');
 var splitter = /^(\S+)\s*(.*)$/;
 
 /**
- * Export `events`
+ * Events Hash
  */
 
-exports = module.exports = bind;
-exports.bind = bind;
-exports.unbind = unbind;
+var events = {};
 
 /**
- * Bind events to a given `el`.
+ * Expose `Events`.
+ */
+
+module.exports = Events;
+
+/**
+ * Initialize a new `Events`.
+ *
+ * @api public
+ */
+
+function Events(obj) {
+  if (obj) return mixin(obj);
+}
+
+/**
+ * Mixin the emitter properties.
+ *
+ * @param {Object} obj
+ * @return {Object}
+ * @api private
+ */
+
+function mixin(obj) {
+  for (var key in Events.prototype) {
+    obj[key] = Events.prototype[key];
+  }
+  return obj;
+}
+
+/**
+ * Binds events to elements. The `event` string looks like `event [selector]`,
+ * where `event` is a click, hover, etc. and the optional `selector` will
+ * bind events to elements within `el`. You may curry arguments and provide
+ * many handler `fns` that will get bound to the elements.
  *
  * Example:
  *
- *   bind(this, el, {
- *     "click"        : 'main',
- *     "hover .inner" : 'call',
- *     "keyup .key"   : function(e) { ... }
- *   });
+ *   this.bind('click .day', 'select')
+ *       .bind('mouseover', this.highlight)
+ *       .bind('mouseout', 'unhighlight', 'fade')
  *
- * @param {object} context
+ * @param {HTMLElement} el (optional)
+ * @param {String} event
+ * @param {Function} fns...
+ * @return {Events}
+ * @api public
  */
 
-function bind(context, el, events) {
-  if(!arguments[2]) events = el, el = context, context = this;
+Events.prototype.bind = function(event, fns) {
+  if(!arguments.length) return this;
 
-  for(var key in events) {
-    var method = events[key];
-    if ('function' !== typeof method) method = context[events[key]];
-    if (!method) throw new Error('Method "' + events[key] + '" does not exist');
-    
-    method = method.bind(context);
+  var self = this,
+      el = this.el,
+      args = slice.call(arguments);
 
-    var match = key.match(splitter),
-        eventName = match[1],
-        selector = match[2];
+  fns = args.slice(1);
+  
+  if(event.nodeType !== undefined) el = event, event = args[1], fns = args.slice(2);
+  if(!el) throw new Error('Events: No element to bind to');
 
-    if(selector === '') {
-      $(el).bind(eventName, method);
-    } else {
-      $(el).delegate(selector, eventName, method);
-    }
+  var match = event.match(splitter),
+      eventName = match[1] + '.events',
+      selector = match[2],
+      len = fns.length,
+      fn;
+
+  for(var i = 0; i < len; i++) {
+    fn = fns[i];
+    fn = (typeof fn === 'string') ? self[fn] : fn;
+    fn = fn.bind(self);
+
+    if(selector === '') $(el).on(eventName, fn);
+    else $(el).on(eventName, selector, fn);
   }
-}
+
+  return this;
+};
 
 /**
  * Unbind events
@@ -60,6 +103,17 @@ function bind(context, el, events) {
  * TODO: Finish me
  */
 
-function unbind(el, event) {
-  $(el).unbind(event);
-}
+Events.prototype.unbind = function(event, fns) {
+  var el = this.el,
+      args = slice.call(arguments);
+
+  // Remove all attached events
+  if(!event) {
+    $(el).off('.events');
+    return this;
+  }
+
+  // FINISH!
+
+  return this;
+};
