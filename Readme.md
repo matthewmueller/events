@@ -24,6 +24,7 @@ function Datepicker() {
 // Mixin `Events`
 Events(Datepicker.prototype);
 
+// Methods
 Datepicker.prototype.select = function(e) { ... };
 Datepicker.prototype.next = function(e) { ... };
 Datepicker.prototype.highlight = function(e) { ... };
@@ -45,11 +46,13 @@ Bind mouse and keyboard events to `el`. If no element is defined, Events tries b
 
 The `event` signature is `event [selector]`. If no `selector` is specified, the event is attached to `el`. Here's a couple valid examples:
 
-`click .color`
-`dblclick #save`
-`mouseout div`
-`keypress`
-`hover`
+```
+click .color
+dblclick #save
+mouseout div
+keypress
+hover
+```
 
 You may bind an arbitrary number of `fns` to the event. The functions context are set to `this` (none of that `_.bindAll` jazz). You may also pass strings that get resolved by `this[fn]`.
 
