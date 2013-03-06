@@ -60,7 +60,7 @@ hover
 
 ### Events#unbind([el], [event], [fn]);
 
-Unbind events. If no `fn` is given all functions `event` will be unbound. If no `event` is given, all  functions for all events will be unbound.
+Unbind events. If no `fn` is given all functions `event` will be unbound. If no `event` is given, all  functions for all events will be unbound. If no `el` is passed through, unbind assumes `this.el`.
 
 ## TODO
 
