@@ -41,7 +41,7 @@ Datepicker.prototype.highlight = function(e) { ... };
 Mixin `Events` into an object or prototype.
 
 ```js
-Events(Colorpicker.prototype);
+Events(Datepicker.prototype);
 ```
 
 ### Events#bind([el], event, fn)
