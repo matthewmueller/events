@@ -2,7 +2,8 @@
  * Module dependencies
  */
 
-var $ = require('jquery'),
+var Event = require('event'),
+    Delegate = require('delegate'),
     slice = Array.prototype.slice;
 
 /**
@@ -67,32 +68,24 @@ function mixin(obj) {
  * @api public
  */
 
-Events.prototype.bind = function(event, fns) {
-  if(!arguments.length) return this;
+Events.prototype.bind = function(el, event, fn) {
+  if('string' == typeof el) fn = event, event = el, el = this.el;
 
-  var self = this,
-      el = this.el,
-      args = slice.call(arguments);
+  this._events = this._events || {};
 
-  fns = args.slice(1);
-  
-  if(event.nodeType !== undefined) el = event, event = args[1], fns = args.slice(2);
-  if(!el) throw new Error('Events: No element to bind to');
+  var events = this._events,
+      match = event.match(splitter),
+      eventName = match[1],
+      selector = match[2];
 
-  var match = event.match(splitter),
-      eventName = match[1] + '.events',
-      selector = match[2],
-      len = fns.length,
-      fn;
+  fn = ('string' == typeof fn) ? this[fn] : fn;
+  fn = fn.bind(this);
 
-  for(var i = 0; i < len; i++) {
-    fn = fns[i];
-    fn = (typeof fn === 'string') ? self[fn] : fn;
-    fn = fn.bind(self);
+  if(selector === '') Event.bind(el, eventName, fn);
+  else fn = Delegate.bind(el, selector, eventName, fn);
 
-    if(selector === '') $(el).on(eventName, fn);
-    else $(el).on(eventName, selector, fn);
-  }
+  if(!events[eventName]) events[eventName] = [];
+  events[eventName].push(fn);
 
   return this;
 };
@@ -100,20 +93,26 @@ Events.prototype.bind = function(event, fns) {
 /**
  * Unbind events
  *
- * TODO: Finish me
  */
 
-Events.prototype.unbind = function(event, fns) {
-  var el = this.el,
-      args = slice.call(arguments);
+Events.prototype.unbind = function(el, event, fn) {
+  if(!el) el = this.el;
+  else if('string' == typeof el) fn = event, event = el, el = this.el;
 
-  // Remove all attached events
-  if(!event) {
-    $(el).off('.events');
-    return this;
+  var events = this._events;
+
+  if(event && fn) {
+    Event.unbind(el, event, fn);
+    var i = events[event].indexOf(fn);
+    events[event].splice(i, 1);
+  } else if(event && !fn) {
+    var fns = events[event];
+    for (var i = 0, len = fns.length; i < len; i++) Event.unbind(el, event, fns[i])
+    delete events[event];
+  } else {
+    for(var event in events) this.unbind(el, event);
+    events = {};
   }
-
-  // FINISH!
 
   return this;
 };

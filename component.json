@@ -5,8 +5,12 @@
   "version": "0.0.1",
   "keywords": ["events", "delegation", "view"],
   "main" : "events.js",
+  "scripts": [ "events.js" ],
   "dependencies": {
-    "component/jquery" : "*"
+    "component/event" : "*",
+    "component/delegate" : "*"
   },
-  "scripts": [ "events.js" ]
+  "development" : {
+    "component/domify" : "*"
+  }
 }

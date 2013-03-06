@@ -1,7 +1,7 @@
 
 # events
 
-Stand-alone event bindings, based on how Backbone's views handle events. 
+Stand-alone event bindings, based on how Backbone's views handle events.
 
 ## Installation
 
@@ -11,20 +11,23 @@ Stand-alone event bindings, based on how Backbone's views handle events.
 
 ```js
 var Events = require('events'),
-    $ = require('jquery');
+    domify = require('domify')
 
 function Datepicker() {
-  var el = $('<div class="datepicker">');
-  this.bind('hover', 'highlight', 'select')
+  this.el = domify('<div class="datepicker">')[0];
+  this.bind('hover', 'highlight')
       .bind('keypress', function(e) { ... });
       .bind('click .day', 'select')
       .bind('click .next', this.next)
+
+  this.unbind('click');
 }
 
 // Mixin `Events`
 Events(Datepicker.prototype);
 
 // Methods
+Datepicker.prototype.hover = function(e) { ... };
 Datepicker.prototype.select = function(e) { ... };
 Datepicker.prototype.next = function(e) { ... };
 Datepicker.prototype.highlight = function(e) { ... };
@@ -40,7 +43,7 @@ Mixin `Events` into an object or prototype.
 Events(Colorpicker.prototype);
 ```
 
-### Events#bind([el], event, fns...)
+### Events#bind([el], event, fn)
 
 Bind mouse and keyboard events to `el`. If no element is defined, Events tries binding to `this.el`.
 
@@ -54,16 +57,18 @@ keypress
 hover
 ```
 
-You may bind an arbitrary number of `fns` to the event. The functions context are set to `this` (none of that `_.bindAll` jazz). You may also pass strings that get resolved by `this[fn]`.
-
 ### Events#unbind([el], [event], [fn]);
 
-TODO: Finish me... Right now you can simply unbind all events off `el`.
+Unbind events. If no `fn` is given all functions `event` will be unbound. If no `event` is given, all  functions for all events will be unbound.
 
 ## TODO
 
-* Finish unbind  
-* Replace `component/jquery` with `component/event` and `component/delegate`
+* Passing a delegated function to `unbind` doesn't quite work
+
+```js
+this.bind('click a', fn);
+this.unbind('click', fn); // wont work as it's not same function that gets attached.
+```
 
 ## License
 
