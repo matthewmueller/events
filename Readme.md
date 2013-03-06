@@ -1,7 +1,8 @@
-
 # events
 
-Stand-alone event bindings, based on how Backbone's views handle events.
+Stand-alone event bindings, based on how Backbone's views handle events. Without the jQuery.
+
+Unlike some of the other component event libraries, this library combines event binding and event delegation.
 
 ## Installation
 
